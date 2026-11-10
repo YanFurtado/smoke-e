@@ -1,5 +1,6 @@
 document.documentElement.classList.add("js");
-const IMG={seda:"{{img:seda}}",zippo:"{{img:zippo}}",coroa:"{{img:coroa}}",grafite:"{{img:grafite}}",etiqueta:"{{img:etiqueta}}",trevo:"{{img:trevo}}",fumaca:"{{img:fumaca}}",smiley:"{{img:smiley}}",asterisco:"{{img:asterisco}}",logo:"{{img:logo-branco}}"};
+const IMG={seda:"{{img:seda}}",zippo:"{{img:zippo}}",coroa:"{{img:coroa}}",grafite:"{{img:grafite}}",etiqueta:"{{img:etiqueta}}",trevo:"{{img:trevo}}",fumaca:"{{img:fumaca}}",smiley:"{{img:smiley}}",asterisco:"{{img:asterisco}}",logo:"{{img:logo-branco}}",nuvem:"{{img:nuvem}}",charuto:"{{img:charuto}}",narguile:"{{img:narguile}}",pinca:"{{img:pinca}}",cinzeiro:"{{img:cinzeiro}}",folha:"{{img:folha}}",bolsa:"{{img:bolsa}}"};
+document.querySelectorAll("img[data-art]").forEach(i=>{i.src=IMG[i.dataset.art]});
 /* Dados conferidos no Google Maps em 06/11/2026 */
 const STORES={
   pnz:{code:"PNZ",city:"Petrolina",name:"Petrolina · PE",addr:"R. Joaquim Nabuco, 78 · Centro · Petrolina-PE · 56302-140",short:"R. Joaquim Nabuco, 78",score:"4,6",count:88,rating:"4,6 ★ no Google · 88 avaliações",phone:"5587988257595",phoneLabel:"(87) 98825-7595",cnpj:null,
@@ -726,6 +727,17 @@ const Smoke=(()=>{
   addEventListener("resize",()=>{if(!RM)cvs.forEach(size)});
   document.addEventListener("visibilitychange",()=>{document.hidden?cancelAnimationFrame(raf):refresh()});
   return{refresh};
+})();
+
+/* ---- parallax dos artefatos (só mouse; toque e reduced-motion ficam só com a flutuação CSS) ---- */
+(()=>{
+  if(RM||!matchMedia("(hover:hover) and (pointer:fine)").matches)return;
+  document.querySelectorAll(".gate,.hero,.resale,.news").forEach(box=>{
+    let raf=0,nx=0,ny=0;
+    const apply=()=>{raf=0;box.style.setProperty("--mx",nx.toFixed(3));box.style.setProperty("--my",ny.toFixed(3))};
+    box.addEventListener("pointermove",e=>{const r=box.getBoundingClientRect();nx=(e.clientX-r.left)/r.width*2-1;ny=(e.clientY-r.top)/r.height*2-1;if(!raf)raf=requestAnimationFrame(apply)});
+    box.addEventListener("pointerleave",()=>{nx=ny=0;if(!raf)raf=requestAnimationFrame(apply)});
+  });
 })();
 
 /* =========================================================
