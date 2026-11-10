@@ -243,9 +243,13 @@ header.scrolled .logo img{height:44px}
 .s2 .eyebrow{color:var(--green)}
 .s3{background:var(--ink)}
 .s3 .eyebrow{color:var(--yellow)}
-.s-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.slide.on .s-bg{animation:kb 9s ease-out both}
-@media (max-width:760px){.s2 .s-bg{background-position:100% 50%}.s3 .s-bg{background-position:0 50%}.s-bg{opacity:.4}}
+.s-bg{position:absolute;inset:0;overflow:hidden}
+.s-bg::before,.s-bg::after{content:"";position:absolute;top:0;bottom:0;width:56%;background:var(--bg) no-repeat;background-size:auto 100%}
+.s-bg::before{left:0;background-position:left center;-webkit-mask-image:linear-gradient(90deg,#000 68%,transparent);mask-image:linear-gradient(90deg,#000 68%,transparent)}
+.s-bg::after{right:0;background-position:right center;-webkit-mask-image:linear-gradient(270deg,#000 68%,transparent);mask-image:linear-gradient(270deg,#000 68%,transparent)}
+.slide.on .s-bg{animation:kb2 9s ease-out both}
+@keyframes kb2{from{transform:scale(1.05)}to{transform:scale(1)}}
+@media (max-width:760px){.s-bg{opacity:.4}}
 .s-st{position:absolute;z-index:1;filter:drop-shadow(0 12px 20px #000a)}
 .slide.on .s-st{animation:popIn .9s cubic-bezier(.3,1.5,.5,1) .2s both,float 6s ease-in-out 1.1s infinite}
 @keyframes popIn{from{transform:scale(.3) rotate(-25deg)}to{transform:scale(1) rotate(0)}}
@@ -1078,7 +1082,7 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
           </div>
         </div>
         <div class="slide s2">
-          <div class="s-bg" style="background-image:url('{{img:banner-revenda}}')"></div>
+          <div class="s-bg" style="--bg:url('{{img:banner-revenda}}')"></div>
           <div class="wrap">
             <span class="eyebrow">Atacado · caixa fechada</span>
             <h2>Revenda com preço de <em>caixa</em></h2>
@@ -1087,7 +1091,7 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
           </div>
         </div>
         <div class="slide s3">
-          <div class="s-bg" style="background-image:url('{{img:banner-loja}}')"></div>
+          <div class="s-bg" style="--bg:url('{{img:banner-loja}}')"></div>
           <div class="wrap">
             <span class="eyebrow">Aberto até tarde, todos os dias</span>
             <h2>Achou que a Smoke já <em>fechou?</em></h2>
