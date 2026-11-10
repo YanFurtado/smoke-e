@@ -1,0 +1,7 @@
+tests/saida/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.venv/
+node_modules/
