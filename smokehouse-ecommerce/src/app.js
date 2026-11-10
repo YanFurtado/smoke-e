@@ -171,15 +171,7 @@ let S={store:null,seller:null,view:"home",cat:null,q:"",sort:"rel",cart:{},f:new
 const grad=b=>{const c=PAL[b]||PAL.GENERIC;return `linear-gradient(140deg,${c[0]},${c[1]})`};
 const tl=p=>p.b==="TATTOO"?"Tattoo":p.b==="GIFT"?"Kit":p.b==="VINHO"?"Vinho":p.b.toLowerCase();
 const isOut=p=>(getStock(S.store)[p.id]??0)<=0;
-function show(id){["v-age","v-city","v-store","v-seller","v-owner"].forEach(v=>$("#"+v).hidden=v!==id);if(id!=="v-store"){$("#bnav").hidden=true;$("#wa-fab").hidden=true;$("#cookie").hidden=true;document.body.classList.remove("has-bnav")}window.scrollTo(0,0);Smoke.refresh();if(id==="v-city")cityFx()}
-/* abertura da tela de loja: 1x por sessão (fumaça), depois só um fade de 300 ms; sem nada com reduced-motion */
-function cityFx(){
-  const el=$("#v-city");clearTimeout(cityFx.t);el.classList.remove("intro","fade");
-  if(RM)return;
-  let first=true;try{first=!sessionStorage.getItem("sh_city_intro");sessionStorage.setItem("sh_city_intro","1")}catch(e){}
-  void el.offsetWidth;el.classList.add(first?"intro":"fade");
-  cityFx.t=setTimeout(()=>el.classList.remove("intro","fade"),first?2900:400);
-}
+function show(id){["v-age","v-city","v-store","v-seller","v-owner"].forEach(v=>$("#"+v).hidden=v!==id);if(id!=="v-store"){$("#bnav").hidden=true;$("#wa-fab").hidden=true;$("#cookie").hidden=true;document.body.classList.remove("has-bnav")}window.scrollTo(0,0);Smoke.refresh()}
 document.addEventListener("visibilitychange",()=>document.documentElement.classList.toggle("tab-off",document.hidden));
 function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2200)}
 function openNow(st){const d=new Date(),h=d.getHours()+d.getMinutes()/60,r=d.getDay()===0?st.hrs.sun:st.hrs.wk;return h>=r[0]&&h<r[1]}
