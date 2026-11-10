@@ -33,3 +33,11 @@ for fn, name in SRC.items():
     if p != dst:
         shutil.copyfile(p, dst)
     print(f"{name:9} {im.size} {out.stat().st_size/1024:.1f} KB")
+
+# banners de fundo (sem transparência): 1800 px de largura, WebP lossy
+for name in ("banner-loja", "banner-revenda"):
+    im = Image.open(ROOT / "assets/marca" / f"{name}.png").convert("RGB")
+    im.thumbnail((1800, 1800), Image.LANCZOS)
+    out = ROOT / "assets/web" / f"{name}.webp"
+    im.save(out, "WEBP", quality=62, method=6)
+    print(f"{name:14} {im.size} {out.stat().st_size/1024:.1f} KB")
