@@ -44,6 +44,7 @@ Os links de venda dos colaboradores passam a usar automaticamente esse endereço
 smokehouse-ecommerce/
 ├── index.html            ← site pronto (gerado pelo build.py; é o que vai para o ar)
 ├── build.py              ← monta o index.html a partir de src/ + assets/web/
+├── tools/make_assets.py  ← converte os PNGs dos artefatos (assets/marca) em .webp otimizado (assets/web)
 ├── src/
 │   ├── template.html     ← HTML e CSS (vitrine, colaborador e painel)
 │   └── app.js            ← toda a lógica (vitrine, busca, checkout, colaborador, donos)
@@ -63,6 +64,8 @@ smokehouse-ecommerce/
 1. Edite `src/template.html` (estrutura e estilos) ou `src/app.js` (dados e lógica).
 2. Rode `python3 build.py`, que gera o `index.html` com imagens e fonte embutidas.
 3. Faça o commit do `index.html` junto com os arquivos de `src/`.
+
+**Artefatos flutuantes** (charuto, narguilé, pinça, cinzeiro, folha, bolsa, fumaça): no HTML use `<span class="cs ..."><img data-art="nome" alt=""></span>`; o `src` é preenchido pelo `app.js` a partir do objeto `IMG`, assim cada imagem é embutida uma única vez. Para um artefato novo, coloque o PNG transparente em `assets/marca/`, inclua-o em `tools/make_assets.py`, rode `py tools/make_assets.py` e adicione o nome em `IMG` no `app.js`. A flutuação é CSS e o parallax do mouse (só desktop) está no `app.js`; ambos respeitam `prefers-reduced-motion`.
 
 Onde ficam os dados principais em `src/app.js`:
 

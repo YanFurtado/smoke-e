@@ -83,6 +83,100 @@ img{display:block}
 .gate .d1{animation-delay:.15s}.gate .d2{animation-delay:.3s}.gate .d3{animation-delay:.45s}.gate .d4{animation-delay:.6s}
 @keyframes rise{from{transform:translateY(20px)}to{transform:none}}
 
+/* ---------- Escolha de loja: artefatos, fumaça e abertura ---------- */
+.tab-off *{animation-play-state:paused!important}
+.gate{--z:calc((100vw - var(--col,450px))/2);--ease:cubic-bezier(.22,1,.36,1)}
+#v-age{--col:620px}
+#v-city .gate-card{max-width:430px}
+#v-city .cities{grid-template-columns:1fr}
+/* stickers: cada um é um <span class="cs"> (posição, rotação, parallax, pop) com <img> flutuando dentro */
+.cs{position:absolute;z-index:1;pointer-events:none;width:min(var(--w,120px),max(52px,calc(var(--z,999px)*.85)));rotate:var(--r,0deg);translate:calc(var(--mx,0)*var(--d,10)*1px) calc(var(--my,0)*var(--d,10)*1px);transition:translate .7s var(--ease)}
+.cs img{display:block;width:100%;height:auto;opacity:var(--o,.95);filter:drop-shadow(0 10px 16px #000a);animation:csFloat var(--dur,7s) ease-in-out var(--del,0s) infinite}
+@keyframes csFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.cs.l{left:calc(var(--z)*var(--p,.2))}.cs.r{right:calc(var(--z)*var(--p,.2))}
+/* esquerda */
+.c-trevo{--w:112px;--p:.38;--r:12deg;--d:14;--dur:6.5s;--del:-1s;top:7%}
+.c-cinz{--w:128px;--p:.18;--r:-9deg;--d:10;--dur:8s;--del:-3s;top:27%}
+.c-bolsa{--w:132px;--p:.5;--r:-14deg;--d:18;--dur:5.5s;--del:-2s;top:50%}
+.c-narg{--w:200px;--p:-.2;--r:-7deg;--d:8;--dur:9s;--del:-5s;bottom:2%}
+/* direita */
+.c-aster{--w:78px;--p:.55;--r:-16deg;--d:20;--dur:5s;--del:-.5s;top:6%}
+.c-char{--w:210px;--p:-.22;--r:-6deg;--d:9;--dur:8.5s;--del:-4s;top:14%}
+.c-folha{--w:104px;--p:.42;--r:16deg;--d:16;--dur:6s;--del:-2.5s;top:43%}
+.c-zippo{--w:128px;--p:.12;--r:10deg;--d:12;--dur:7.5s;--del:-6s;top:55%}
+.c-pinca{--w:156px;--p:.2;--r:-18deg;--d:11;--dur:7s;--del:-1.5s;bottom:5%}
+/* fumaça ambiente: 3 camadas (só transform/opacity) */
+.cfx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.sm{position:absolute;left:0;bottom:0;width:200%;will-change:transform}
+.sm-back{height:78%;opacity:.15;background:radial-gradient(28% 60% at 20% 100%,#dcebe0,transparent 70%),radial-gradient(30% 50% at 50% 96%,#cfe3d6,transparent 70%),radial-gradient(28% 55% at 80% 100%,#dcebe0,transparent 70%),radial-gradient(14% 30% at 35% 70%,#cfe3d6,transparent 70%);background-size:50% 100%;background-repeat:repeat-x;animation:smx 40s linear infinite}
+.sm-mid{height:58%;opacity:.25;background:radial-gradient(20% 42% at 15% 100%,#e4efe7,transparent 72%),radial-gradient(18% 36% at 40% 92%,#d6e8dc,transparent 72%),radial-gradient(22% 44% at 65% 100%,#e4efe7,transparent 72%),radial-gradient(16% 34% at 88% 85%,#d6e8dc,transparent 72%);background-size:50% 100%;background-repeat:repeat-x;animation:smx 27s linear infinite reverse}
+@keyframes smx{to{transform:translateX(-50%)}}
+.sm-front img{position:absolute;bottom:-40%;width:clamp(200px,24vw,380px);height:auto;opacity:0;mix-blend-mode:screen;filter:grayscale(1) brightness(1.6);animation:smUp var(--dur,22s) linear var(--del,0s) infinite}
+.sm-front .w1{left:-2%;--dur:24s;--del:-3s}.sm-front .w2{right:-3%;--dur:30s;--del:-14s}.sm-front .w3{left:36%;--dur:34s;--del:-22s;width:clamp(160px,18vw,300px)}
+@keyframes smUp{0%{opacity:0;transform:translate(0,0) scale(.85) rotate(-4deg)}15%{opacity:.2}75%{opacity:.18}100%{opacity:0;transform:translate(24px,-125vh) scale(1.25) rotate(5deg)}}
+/* abertura: fumaça densa nasce da base, abre do centro e sobe */
+.sm-intro{display:none;position:absolute;inset:0;z-index:3;pointer-events:none}
+.sm-intro i{position:absolute;top:-10%;bottom:-10%;width:52%;opacity:0;background:radial-gradient(70% 30% at 50% 68%,#aab6ae,transparent 75%),radial-gradient(45% 40% at 65% 55%,#8d9a92,transparent 72%),radial-gradient(50% 45% at 30% 30%,#9aa79f,transparent 72%),radial-gradient(60% 60% at 50% 50%,#56615a 0,#2c332e 60%,transparent 90%)}
+.sm-intro .il{left:0;-webkit-mask-image:linear-gradient(90deg,#000 78%,transparent);mask-image:linear-gradient(90deg,#000 78%,transparent)}
+.sm-intro .ir{right:0;-webkit-mask-image:linear-gradient(270deg,#000 78%,transparent);mask-image:linear-gradient(270deg,#000 78%,transparent)}
+#v-city.intro .sm-intro{display:block}
+#v-city.intro .il{animation:openL 2.4s var(--ease) both}
+#v-city.intro .ir{animation:openR 2.4s var(--ease) both}
+@keyframes openL{0%{opacity:0;translate:0 45%}33%{opacity:1;translate:0 0}40%{opacity:1;translate:0 0}72%{opacity:.7;translate:-48% -32%}100%{opacity:0;translate:-80% -65%}}
+@keyframes openR{0%{opacity:0;translate:0 45%}33%{opacity:1;translate:0 0}40%{opacity:1;translate:0 0}72%{opacity:.7;translate:48% -32%}100%{opacity:0;translate:80% -65%}}
+#v-city.intro .gate-logo{animation:cLogo 1s var(--ease) .6s both}
+#v-city.intro h1{animation:cRise .6s var(--ease) 1.2s both}
+#v-city.intro .gate-card>p{animation:cRise .6s var(--ease) 1.32s both}
+#v-city.intro .city:nth-child(1){animation:cRise .7s var(--ease) 1.5s both}
+#v-city.intro .city:nth-child(2){animation:cRise .7s var(--ease) 1.62s both}
+#v-city.intro .cs{animation:cPop .55s cubic-bezier(.34,1.56,.64,1) calc(1.5s + var(--i,0)*45ms) both}
+@keyframes cLogo{from{opacity:0;scale:.92;filter:blur(12px)}to{opacity:1;scale:1;filter:blur(0)}}
+@keyframes cRise{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+@keyframes cPop{from{opacity:0;scale:0}to{opacity:1;scale:1}}
+#v-city.fade{animation:cFade .3s ease both}
+@keyframes cFade{from{opacity:0}to{opacity:1}}
+/* mobile: 5 stickers pequenos nos cantos; resto some */
+/* age gate: novos artefatos junto dos stickers de marca */
+.a-narg{--w:170px;--p:-.12;--r:-8deg;--d:9;--dur:9s;--del:-2s;top:36%}
+.a-char{--w:190px;--p:-.16;--r:-8deg;--d:10;--dur:8s;--del:-5s;top:46%}
+.a-folha{--w:96px;--p:.5;--r:-14deg;--d:16;--dur:6s;--del:-1s;top:60%}
+.a-cinz{--w:118px;--p:.5;--r:10deg;--d:14;--dur:7s;--del:-3s;top:58%}
+.a-nuvem{--w:230px;--p:.1;--r:6deg;--d:6;--dur:11s;--del:-4s;top:-2%;--o:.22}
+@media (max-width:899px){
+  #v-age .cs{width:var(--mw,64px)}#v-age .cs.l{left:var(--ml,-12px)}#v-age .cs.r{right:var(--ml,-12px)}
+  #v-age .a-folha,#v-age .a-cinz,#v-age .a-nuvem{display:none}
+  #v-age .a-narg{--mw:70px;top:auto;bottom:22%}#v-age .a-char{--mw:92px;--ml:-26px;top:auto;bottom:34%}
+}
+/* hero / revenda / faixa amarela */
+.hero{--mx:0}
+.cs.h{--z:999px}
+.slide.on .cs{animation:cPop .7s cubic-bezier(.34,1.56,.64,1) calc(.3s + var(--i,0)*90ms) both}
+.h-char{--w:176px;right:4%;top:9%;--r:-6deg;--d:12;--dur:8s}
+.h-cinz{--w:112px;right:26%;bottom:7%;--r:8deg;--d:18;--dur:6.5s;--del:-2s}
+.h-folha{--w:104px;right:31%;top:8%;--r:14deg;--d:16;--dur:6s;--del:-1s}
+.h-bolsa{--w:128px;right:2%;bottom:6%;--r:-10deg;--d:12;--dur:7s;--del:-3s}
+.h-pinca{--w:140px;right:3%;top:10%;--r:-14deg;--d:14;--dur:7.5s;--del:-2s}
+.h-cinz3{--w:104px;right:30%;bottom:6%;--r:8deg;--d:18;--dur:6s;--del:-4s}
+@media (max-width:760px){.slide .cs{width:min(var(--w),84px);opacity:.5}.slide .cs.h-cinz,.slide .cs.h-cinz3,.slide .cs.h-folha{display:none}}
+.resale-art .cs{z-index:2}
+.resale-art .cs img{position:static;width:100%;transition:none}
+.r-folha{--w:92px;left:7%;top:9%;--r:-16deg;--d:16;--dur:6s}
+.r-bolsa{--w:112px;right:6%;bottom:8%;--r:10deg;--d:12;--dur:7s;--del:-2s}
+.news .cs{z-index:0}
+.n-char{--w:96px;right:16%;top:-22px;--r:-18deg;--d:10;--dur:7s}
+@media (max-width:760px){.n-char{display:none}}
+@media (max-width:759px){
+  #v-city .cs{width:var(--mw,70px)}
+  #v-city .cs.l{left:var(--ml,-14px)}#v-city .cs.r{right:var(--ml,-14px)}
+  #v-city .c-aster,#v-city .c-cinz,#v-city .c-zippo,#v-city .c-bolsa{display:none}
+  #v-city .c-trevo{--mw:58px;--ml:10px;top:2%}
+  #v-city .c-char{--mw:104px;--ml:-30px;top:1%}
+  #v-city .c-narg{--mw:84px;--ml:-12px;bottom:1%}
+  #v-city .c-pinca{--mw:84px;--ml:-6px;bottom:1%}
+  #v-city .c-folha{--mw:62px;--ml:-16px;top:44%}
+  #v-city .cs img{opacity:.9}
+}
+
 /* ---------- vantagens (ticker) ---------- */
 .perksbar{background:var(--green);color:#fff;font-size:12.5px;overflow:hidden;white-space:nowrap}
 .ticker{display:inline-flex;gap:56px;padding-block:8px;animation:tick 38s linear infinite;padding-left:56px}
@@ -889,7 +983,7 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
 .cfg label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px}
 .cfg input{width:90px;border:1.5px solid var(--line);border-radius:10px;padding:7px 10px;text-align:right;font-variant-numeric:tabular-nums}
 
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.js .rv,.js .rv-pop{opacity:1;transform:none}.smoke-cv{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.js .rv,.js .rv-pop{opacity:1;transform:none}.smoke-cv{display:none}.sm-front,.sm-intro{display:none!important}.cs{transition:none}}
 </style>
 
 <div class="proto">Protótipo navegável · <b>marca, stickers, fonte e foto</b> do Drive da Smoke House · <b>sedas e atacado</b> com preços reais do cardápio PNZ · demais itens e estoque LEM são exemplo</div>
@@ -901,6 +995,11 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
   <img class="sticker st2" src="{{img:asterisco}}" alt="">
   <img class="sticker st3" src="{{img:grafite}}" alt="">
   <img class="sticker st4" src="{{img:smiley}}" alt="">
+  <span class="cs a-nuvem r" aria-hidden="true"><img data-art="nuvem" alt=""></span>
+  <span class="cs a-narg l" aria-hidden="true"><img data-art="narguile" alt=""></span>
+  <span class="cs a-char r" aria-hidden="true"><img data-art="charuto" alt=""></span>
+  <span class="cs a-folha l" aria-hidden="true"><img data-art="folha" alt=""></span>
+  <span class="cs a-cinz r" aria-hidden="true"><img data-art="cinzeiro" alt=""></span>
   <div class="wrap"><div class="gate-card">
     <img class="gate-logo" src="{{img:logo-branco}}" alt="Smoke House Tabacaria">
     <h1 class="anim-in d1">Você tem <em>18 anos</em> ou mais?</h1>
@@ -916,11 +1015,22 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
 
 <!-- CIDADE -->
 <section id="v-city" class="gate" hidden>
-  <canvas class="smoke-cv" data-smoke="city"></canvas>
-  <img class="sticker st1" src="{{img:trevo}}" alt="">
-  <img class="sticker st2" src="{{img:asterisco}}" alt="">
-  <img class="sticker st3" src="{{img:zippo}}" alt="">
-  <div class="wrap"><div class="gate-card" style="max-width:680px">
+  <div class="cfx" aria-hidden="true">
+    <div class="sm sm-back"></div>
+    <div class="sm sm-mid"></div>
+    <div class="sm-front"><img class="w1" data-art="nuvem" alt=""><img class="w2" data-art="nuvem" alt=""><img class="w3" data-art="nuvem" alt=""></div>
+  </div>
+  <div class="sm-intro" aria-hidden="true"><i class="il"></i><i class="ir"></i></div>
+  <span class="cs c-trevo l" style="--i:0" aria-hidden="true"><img data-art="trevo" alt=""></span>
+  <span class="cs c-cinz l" style="--i:1" aria-hidden="true"><img data-art="cinzeiro" alt=""></span>
+  <span class="cs c-bolsa l" style="--i:2" aria-hidden="true"><img data-art="bolsa" alt=""></span>
+  <span class="cs c-narg l" style="--i:3" aria-hidden="true"><img data-art="narguile" alt=""></span>
+  <span class="cs c-aster r" style="--i:4" aria-hidden="true"><img data-art="asterisco" alt=""></span>
+  <span class="cs c-char r" style="--i:5" aria-hidden="true"><img data-art="charuto" alt=""></span>
+  <span class="cs c-folha r" style="--i:6" aria-hidden="true"><img data-art="folha" alt=""></span>
+  <span class="cs c-zippo r" style="--i:7" aria-hidden="true"><img data-art="zippo" alt=""></span>
+  <span class="cs c-pinca r" style="--i:8" aria-hidden="true"><img data-art="pinca" alt=""></span>
+  <div class="wrap"><div class="gate-card">
     <img class="gate-logo" src="{{img:logo-branco}}" alt="Smoke House Tabacaria" style="width:min(190px,48vw)">
     <h1 class="anim-in d1">Escolha a sua <em>loja</em></h1>
     <p class="anim-in d2">O estoque, os preços e a entrega mudam conforme a cidade.</p>
@@ -972,6 +1082,8 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
       <div class="slides">
         <div class="slide s1 on">
           <div class="s-photo" style="background-image:url('{{img:foto-isqueiros}}')"></div>
+          <span class="cs h h-char" style="--i:0" aria-hidden="true"><img data-art="charuto" alt=""></span>
+          <span class="cs h h-cinz" style="--i:1" aria-hidden="true"><img data-art="cinzeiro" alt=""></span>
           <div class="wrap">
             <span class="eyebrow">Tem muito mais na Smoke House</span>
             <h2>Do jeito que você <em>imagina.</em></h2>
@@ -981,6 +1093,8 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
         </div>
         <div class="slide s2">
           <img class="s-st" src="{{img:seda}}" alt="">
+          <span class="cs h h-folha" style="--i:0" aria-hidden="true"><img data-art="folha" alt=""></span>
+          <span class="cs h h-bolsa" style="--i:1" aria-hidden="true"><img data-art="bolsa" alt=""></span>
           <div class="wrap">
             <span class="eyebrow">Atacado · caixa fechada</span>
             <h2>Revenda com preço de <em>caixa</em></h2>
@@ -992,6 +1106,8 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
           <span class="flame-glow" style="right:calc(12% + 60px);top:calc(50% - 120px)"></span>
           <img class="s-st" src="{{img:zippo}}" alt="">
           <img class="s-st s-st2" src="{{img:asterisco}}" alt="">
+          <span class="cs h h-pinca" style="--i:0" aria-hidden="true"><img data-art="pinca" alt=""></span>
+          <span class="cs h h-cinz3" style="--i:1" aria-hidden="true"><img data-art="cinzeiro" alt=""></span>
           <div class="wrap">
             <span class="eyebrow">Aberto até tarde, todos os dias</span>
             <h2>Achou que a Smoke já <em>fechou?</em></h2>
@@ -1023,7 +1139,7 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
 
       <section class="sec">
         <div class="resale rv">
-          <div class="resale-art"><img src="{{img:etiqueta}}" alt="Etiqueta Smoke House"></div>
+          <div class="resale-art"><img src="{{img:etiqueta}}" alt="Etiqueta Smoke House"><span class="cs r-folha" aria-hidden="true"><img data-art="folha" alt=""></span><span class="cs r-bolsa" aria-hidden="true"><img data-art="bolsa" alt=""></span></div>
           <div class="resale-txt">
             <h3>Revenda Smoke House e <em>lucre mais</em></h3>
             <p>Tabacarias, conveniências e distribuidoras compram caixa fechada com preço de atacado direto das lojas LEM e PNZ.</p>
@@ -1108,7 +1224,7 @@ footer{position:relative;background:var(--ink);color:#b4b7af;font-size:13px;over
   <!-- PÁGINAS -->
   <main class="wrap" id="page" hidden></main>
 
-  <div class="news"><img class="smiley" src="{{img:smiley}}" alt=""><div class="wrap">
+  <div class="news"><img class="smiley" src="{{img:smiley}}" alt=""><span class="cs n-char" aria-hidden="true"><img data-art="charuto" alt=""></span><div class="wrap">
     <b>Ofertas antes de todo mundo, direto no seu WhatsApp</b>
     <form id="news-form"><input id="news-in" type="tel" placeholder="Seu WhatsApp com DDD" aria-label="WhatsApp"><button class="btn btn-dark" type="submit">Quero receber</button></form>
   </div></div>
