@@ -1,0 +1,5 @@
+{
+  "nome": "Smoke House · E-commerce",
+  "ordem": ["hoje_vitrine", "hoje_colaborador", "hoje_donos", "vitrine_a", "vitrine_b", "colaborador", "donos"],
+  "aparelhos": ["desktop", "tablet", "mobile"]
+}
