@@ -1,0 +1,806 @@
+
+===== PAGE 1 =====
+Especificação do PDV Smoke House
+ Nov 17, 2026  ·  @Lucas Prazeres  · versão 1.2.02
+Como usar este documento
+Este documento lista as regras do PDV que o Lucas já validou no protótipo. O protótipo
+(arquivo HTML) mostra as telas; aqui ficam as regras escritas, para o programador não
+precisar descobrir clicando.
+Tudo o que está aqui foi aprovado. O que ainda não foi decidido não entra. O
+documento continua sendo atualizado conforme novas mudanças forem validadas.
+A parte fiscal (emissão real da NFC-e) está parada: será definida com o sistema que
+vai fazer a integração.
+O protótipo guarda os dados só na memória da página e usa senhas de teste (1234).
+Banco de dados, login real e integrações ficam a cargo do programador (ver a última
+seção).
+Visão geral
+O sistema tem três aplicativos que compartilham o mesmo caixa e os mesmos cadastros.
+As vendas do DAV e da NFC-e somam no mesmo fechamento de caixa. O caixa só é
+fechado pelo DAV.
+Nome e logo no topo: Smoke House (logo verde da Smoke House Tabacaria) e, abaixo,
+o terminal (ex.: Terminal 01).
+Barra superior: só “Usuário: nome” de quem abriu o caixa (no HOST, o usuário logado).
+Sem avatar e sem “caixa aberto”.
+Rodapé: só as teclas de atalho e se o servidor está conectado.
+Aplicativo Nome na tela Cor Para que serve
+DAV Frente de
+caixa
+Verde Vendas, cancelamentos, DAVs
+emitidos e fechamento de caixa
+NFC-e Cupom fiscal Azul-petróleo As mesmas telas do DAV; ao finalizar,
+emite NFC-e no CNPJ e certificado
+configurados no HOST
+HOST Retaguarda Azul-petróleo mais
+escuro
+Configurações, cadastros, estoque,
+clientes, financeiro e relatórios
+Especiﬁcação do PDV Smoke House
+Page 1 of 23
+===== PAGE 2 =====
+A navegação entre os três aplicativos fica na barra superior.
+Regras gerais de interface
+Esc sempre volta: toda tela ou janela que abre fecha com Esc e volta para a tela
+anterior.
+Sem funções duplicadas: nunca duas funções fazendo o mesmo serviço (ex.: cancelar
+item é só pelo “-n” na busca; o F4 foi removido).
+Visual: profissional e humano, sem cara de IA, com espaçamento para o design
+respirar.
+Seleção em listas: a linha selecionada tem fundo cinza claro e borda fina preta,
+sempre a mesma, com mouse ou teclado (DAV e NFC-e).
+Setas: nas listas (DAVs emitidos, clientes, produtos), ↑ ↓ movem a seleção; Home/End
+vão ao primeiro/último; Page Up/Down pulam 10.
+Busca sem acento: “essencia” encontra “Essência”.
+Confirmações Sim/Não: janelas no estilo “? Deseja…” com botões Sim e Não; S ou
+Enter confirma, N ou Esc volta.
+Backup do layout: a cada mudança de layout fica uma cópia da versão anterior, para
+poder voltar.
+Terminais e caixas
+Cada terminal tem o seu próprio caixa, e o fechamento de um nunca mexe no outro.
+Exemplo: Terminal 01 = caixa de Arthur, Terminal 02 = caixa de Ana.
+Separação: cada venda, sangria, suprimento, devolução e crédito lançado fica
+marcado com o caixa em que foi feito. O fechamento soma só o que é daquele caixa.
+Nome do caixa: na tela aparece “Caixa de [usuário]”, nunca o número interno do caixa.
+Usuário fixo: o usuário do terminal é fixo e não pode ser trocado. Ao acessar outro
+terminal, o nome do dono já vem preenchido (só leitura) e o sistema pede a senha
+dele.
+Senha errada: mostra “Senha incorreta” e não entra. Usuário inativo não entra.
+Caixa fechado: a tela mostra “CAIXA FECHADO”, não deixa lançar produto, pagar,
+fazer sangria, suprimento, troca, devolução nem lançar crédito.
+Abrir caixa: pede o usuário (o usuário fixo do terminal já vem escolhido), a senha dele
+e o fundo de troco (sugestão vem de HOST › Configurações › Regras do caixa). Cria um
+caixa novo para esse usuário naquele terminal.
+Numeração: os números de DAV e de NFC-e são uma sequência só para a loja toda,
+para nunca repetir.
+Especiﬁcação do PDV Smoke House
+Page 2 of 23
+===== PAGE 3 =====
+Vendas em andamento: cada terminal guarda as suas vendas abertas, separadas
+entre DAV e NFC-e. Trocar de terminal ou de aplicativo não mistura as vendas.
+Cupom impresso: o DAV impresso sai com o terminal certo de cada venda.
+Tela de venda (DAV e NFC-e)
+Caixa livre (sem venda)
+“CAIXA LIVRE” grande no centro, relógio com segundos e, acima, “Operador [nome] ·
+data”.
+Sem a frase “bipe um produto ou comece a digitar” e sem o número do caixa.
+Dois botões pequenos à direita, com ícone em quadradinho: Dicas e Fechar caixa
+(cadeado).
+Barra de busca
+Sem campo de quantidade e sem texto de exemplo dentro da barra.
+Ao digitar, aparece a lista em ordem alfabética, com foto, nome, preço, estoque, ID,
+GTIN e unidade; ao lado, os detalhes do produto escolhido.
+Busca por nome (sem acento), código de barras ou número de cadastro. O número de
+cadastro pode ser digitado sem os zeros (6264 = 006264).
+Enter lança direto quando o código de barras ou o cadastro bate exatamente.
+Produto inativo não aparece na busca.
+A foto cadastrada no HOST aparece na busca, nos detalhes e em “Último item”.
+Quantidade e cancelamento de item
+“2*produto” lança 2 unidades. Só quantidade inteira: fração (0,5*) e zero (0*) são
+recusados com aviso.
+“-1”, “-2”… + Enter cancela o item pela ordem no cupom. É o único jeito de cancelar
+item (sem ✕  no cupom e sem +/− no último item).
+Cancelar item não pede senha. Abre a janela Sim/Não “Cancelar o item” mostrando só
+o que será cancelado (item, nome, quantidade × preço = total).
+Depois de cancelar, os itens são renumerados (001, 002, 003…).
+Clique duplo num produto da busca lança o produto.
+Depois de uma mensagem de erro (ex.: produto sem estoque), Esc volta o cursor para
+a busca com o texto selecionado: a próxima leitura do código de barras substitui o que
+estava escrito.
+Especiﬁcação do PDV Smoke House
+Page 3 of 23
+===== PAGE 4 =====
+Cupom na tela
+À esquerda, o cupom; o item lançado por último fica destacado.
+Cada linha mostra número do item, número de cadastro e descrição (o código de
+barras não aparece).
+Com cliente informado, o nome aparece no topo do cupom e o CPF/CNPJ no campo do
+consumidor.
+À direita: “Último item” (foto, nome, quantidade × preço), “Qtde itens” e o TOTAL em
+fonte bem grande.
+Botões: Formas de pagamento (F3, principal, com “Finalizar a venda”) e Cancelar
+cupom (F6, discreto). Sem “Atalhos F11” nessa área.
+Estoque no caixa
+O caixa só vende o que está no estoque da frente de loja. Se não tem quantidade,
+aparece o aviso e o produto não entra.
+O aviso diz se há o produto no fundo de loja ou na matriz (“peça a reposição”) ou se
+está em falta nos dois.
+Quando o estoque da frente fica no mínimo ou acaba, aparece o alerta de estoque
+baixo.
+Produto que já está em outra venda aberta (em qualquer terminal) conta como
+reservado, para não vender a mesma unidade duas vezes.
+Vendas simultâneas (F7 e F8)
+Resolve o caso de dois funcionários usando o mesmo caixa: um começa a venda dele sem
+esperar o outro terminar.
+F7 abre uma nova venda e guarda a atual. Máximo de 4 vendas abertas por caixa. Não
+abre outra se a atual ainda está vazia.
+F8 troca entre as vendas abertas. Também dá para clicar na barra de vendas que
+aparece acima do cupom (Venda 1, Venda 2…, com itens, total e o primeiro nome do
+cliente).
+Cada venda guarda os seus itens, cliente, desconto, observação e crédito de troca.
+Ao finalizar ou cancelar uma venda, o caixa volta para outra venda que ainda tem itens.
+DAV e NFC-e têm vendas separadas: uma venda começada no DAV não aparece no
+NFC-e.
+Especiﬁcação do PDV Smoke House
+Page 4 of 23
+===== PAGE 5 =====
+Teclas de atalho e Menu principal
+Dentro de Formas de pagamento: F1 identifica o cliente e F8 abre desconto/acréscimo.
+F10 não finaliza a venda.
+Saíram por repetirem outras funções: F2 (só focava a busca) e F5 Consulta preço (a
+busca já mostra preço e estoque).
+Não existem: tecla de balança, F4 (cancelar item), finalizar em dinheiro direto, vender
+por total, abrir gaveta e pesquisa por parte do nome no caixa.
+O rodapé mostra: F1 Cliente, F3 Pagamento, F6 Cancelar cupom, F7 Nova venda, F8
+Trocar venda, F10 Alterar valor, F11 Menu.
+No navegador o F11 pode abrir a tela cheia; nesse caso use o botão ☰  ao lado da busca.
+No sistema instalado o F11 abre o menu.
+Menu principal (F11 ou o botão ☰ ): Suprimento, Sangria, Troca, Devolução, Identifica
+cliente, Crédito do cliente, Observação no cupom, Nova venda, Trocar de venda, Alterar
+valor do item, Cancelar cupom e Configurações (pede senha do supervisor).
+Saíram do menu: Supervisor (a conferência dos caixas fica em HOST › Caixas),
+Consulta preço, listagem de vendas (já existe a aba DAVs emitidos), relatórios, vender
+por total, finaliza em dinheiro, abrir gaveta e Receber do cliente (a baixa de parcelas é
+só em HOST › Financeiro › Contas a receber).
+Preço de atacado não fica no menu: é uma opção para ativar em Configurações do
+caixa › Geral.
+O botão Dicas explica o uso do caixa com essas mesmas regras.
+Tecla Função
+F1 Identificar cliente (CRM)
+F3 Pagamento (Formas de pagamento)
+F6 Cancelar cupom (janela Sim/Não, sem senha)
+F7 Nova venda (guarda a atual)
+F8 Trocar de venda
+F9 Observação que sai impressa no cupom
+F10 Alterar o valor de um item: pede o número do item
+e depois o novo preço unitário
+F11 Menu principal
+Esc Volta para a tela anterior
+Especiﬁcação do PDV Smoke House
+Page 5 of 23
+===== PAGE 6 =====
+Pagamento e finalização da venda
+1. F3 abre Formas de pagamento: cliente (F1), total da venda, forma de pagamento +
+valor + Ok, lista de pagamentos lançados (dá para remover), troco, desconto,
+acréscimo, restante e o botão Finalizar.
+2. Uma forma que não aceita troco não pode receber valor maior que o restante.
+3. Ao finalizar, abre a pré-visualização do cupom no modelo do DAV (cabeçalho da loja,
+itens, cancelamentos, totais, forma de pagamento, quantidade de itens, observações
+e “PARABÉNS POR SUA COMPRA!”). O operador decide se imprime.
+4. Esc na pré-visualização volta para o Caixa livre.
+Depois de finalizar ou cancelar o cupom, a próxima venda começa sem cliente. Para
+usar um cliente de novo, é preciso apertar F1 de novo (evita lançar várias vendas num
+mesmo cadastro).
+A venda finalizada com cliente entra no histórico dele no CRM (compras, total gasto,
+última compra).
+Caixa fechado: o F3 não abre e a venda não finaliza.
+Limite de desconto: desconto total da venda (F8 no pagamento, desconto em item e
+preço reduzido pelo F10) acima do “Desconto máximo sem senha” (padrão 5%) pede a
+senha do supervisor ao finalizar. O F10 também pede a senha na hora quando o novo
+preço fica abaixo desse limite.
+Esc com pagamentos lançados: pergunta “Sair do pagamento?” (Sim/Não). Sim
+descarta os pagamentos e o desconto lançados ali.
+Crédito do cliente: só aparece como forma de pagamento quando o cliente
+identificado no F1 tem saldo, mostrando o saldo. O valor não passa do saldo.
+PRAZO: regras na seção Venda a prazo e contas a receber.
+Sobra de troca: quando a configuração manda virar crédito, o sistema exige o cliente
+identificado antes de finalizar e lança a sobra como crédito dele.
+Cancelamentos, DAVs emitidos e movimentos do caixa
+Senha
+Cancelar item ou cupom em andamento: sem senha (pode ser ligado em
+Configurações, vem desligado).
+Senha do supervisor (caixa): a janela pede quem autoriza e a senha dele. Só autorizam
+usuários com perfil Administrador, Gerente ou Supervisor de caixa. Senha errada é
+recusada.
+Especiﬁcação do PDV Smoke House
+Page 6 of 23
+===== PAGE 7 =====
+Senha do administrador (HOST e correções sensíveis): só usuários com perfil
+Administrador.
+Pedem senha do supervisor: cancelar venda finalizada, alterar forma de pagamento de
+venda finalizada, desconto ou preço abaixo do limite, Configurações do caixa,
+devolução (se ligado), troca/devolução fora do prazo, liberar prazo para cliente com
+parcela vencida, dispensar multa e juros.
+Cancelar cupom (F6)
+Janela Sim/Não com ícone azul de interrogação: “Todos os itens foram cancelados.
+Deseja cancelar o cupom?”.
+Sim: o cupom fica registrado como cancelado e a tela volta para Caixa livre. Não: a
+venda continua.
+DAVs emitidos
+Aberto pela aba DAVs emitidos (no NFC-e: Notas emitidas). As datas começam no dia
+de hoje.
+Filtros Todos / Finalizados / Cancelados / Importados / Devolvidos, busca por número,
+cliente ou produto, e período.
+Tabela: número, hora, cliente, pagamento, vendedor, desconto, total e situação. Todas
+as colunas visíveis, sem rolagem lateral.
+A lista e o detalhe da venda ficam lado a lado; só empilham em telas pequenas (no
+celular, tocar na venda leva ao detalhe).
+Clique direito ou botão ⋯  na linha (setas ↑ ↓ navegam no menu): Reimpressão do
+cupom, Enviar por WhatsApp, Imprimir ticket para troca futura, Alterar forma de
+pagamento e Cancelar cupom (desabilitados quando não se aplicam).
+WhatsApp: pede o número (vem o do cliente, se houver), valida DDD + número e abre
+a conversa com o resumo da venda pronto.
+Ticket de troca: sai sem preços, com número T + número da venda e a data limite da
+troca.
+Alterar forma de pagamento: só DAV finalizado. As formas novas precisam somar o
+mesmo total; crédito do cliente e prazo ficam como estão. Pede senha do supervisor e
+fica registrado.
+Navegação com as setas, além do mouse.
+Cancelar venda finalizada
+Pede o motivo (cliente desistiu, erro de lançamento, produto com defeito, ou outro
+com observação) e depois a senha do supervisor.
+Especiﬁcação do PDV Smoke House
+Page 7 of 23
+===== PAGE 8 =====
+Antes de confirmar mostra o que acontece: os produtos voltam para a frente de loja, a
+compra sai do histórico do cliente, quanto devolver em dinheiro, o crédito do cliente
+que volta e o que estornar na maquininha ou PIX.
+Venda a prazo: o que falta pagar é cancelado. Se já tem parcela paga, o cancelamento é
+bloqueado: primeiro desfaz as baixas em Contas a receber.
+Fica registrado o motivo e quem autorizou.
+Troca e devolução
+São duas funções separadas no Menu principal, com regras configuráveis em
+Configurações › Troca e devolução (prazo, senha, volta ao estoque, forma de
+reembolso, sobra de crédito, exigir ticket).
+Com “exigir ticket” ligado, a troca só aceita o número do ticket impresso daquela
+venda.
+Devolução com reembolso em Crédito do cliente: o crédito vai para o cliente da venda;
+se a venda não tinha cliente, pede CPF, CNPJ ou telefone de um cliente cadastrado.
+Troca com crédito e sem produto novo lançado: o F6 oferece desfazer a troca (os
+produtos saem do estoque de novo e o crédito some).
+Produto que volta ao estoque entra na frente de loja e fica registrado no rastreio do
+produto.
+Troca e devolução valem pelo valor pago de fato, com o desconto da venda já aplicado.
+Devolução ou troca de venda a prazo abate das parcelas em aberto, sem devolver
+dinheiro. Só o que passar do saldo em aberto volta pela forma escolhida.
+Venda que já teve devolução não pode ser cancelada, e a baixa de uma parcela não
+pode ser desfeita depois de uma devolução.
+Toda devolução grava o operador e quem autorizou. Ela não aparece como compra no
+histórico do cliente.
+Sangria e suprimento
+Tela com valor + justificativa + Confirmar. Ficam marcados no caixa em que foram
+feitos, com data e operador.
+Sangria e suprimento entram no Caixa geral do Financeiro e no relatório de
+fechamento. Hoje toda sangria vai para a conta do banco (ponto em aberto: sangria
+para pagar fornecedor).
+Crédito do cliente lançado no caixa
+Menu principal › Crédito do cliente. Pede a senha do administrador.
+Especiﬁcação do PDV Smoke House
+Page 8 of 23
+===== PAGE 9 =====
+Informa o cliente (CPF, CNPJ ou telefone; se já está no F1, vem preenchido), o valor e a
+forma em que recebeu, mais uma observação opcional.
+O valor vira saldo do cliente e entra no fechamento daquele caixa (em dinheiro, soma
+na gaveta).
+Fechamento de caixa e conferência
+Só pelo DAV: o caixa fecha só na aba Fechamento de caixa do DAV. O botão Fechar
+caixa da tela livre leva para essa aba. Não existe fechar caixa no HOST nem no
+Supervisor.
+Venda aberta bloqueia: se houver qualquer venda aberta no terminal (DAV ou NFC-e),
+aparece “Há venda em andamento” e o caixa não fecha.
+Puxado do sistema: o operador clica em Fechar caixa e o sistema calcula os valores. O
+fechamento cego existe nas configurações, mas fica desligado; ligado, o operador
+digita o que contou e o caixa fecha do mesmo jeito.
+Cabeçalho: “Caixa de [usuário] · aberto às HH:MM · data”.
+Conteúdo: recebido por forma de pagamento, vendido no DAV, vendido no NFC-e,
+recebido de clientes (crédito lançado no caixa), devoluções, total e dinheiro na gaveta
+(fundo de troco + suprimentos − sangrias − devoluções em dinheiro). O PRAZO
+aparece pelo valor líquido, já descontado o que foi abatido ou devolvido. Conta as
+vendas daquele caixa, não do dia.
+Confirmação: “Fechar o caixa de [usuário]?”, com o total recebido já sem as
+devoluções, igual ao comprovante. Depois de fechado, o caixa não aceita vendas,
+movimentos, cancelamentos nem devoluções.
+Impressão: cupom de fechamento no modelo do sistema atual, com as seções DAV,
+NFC-e, Totalizadores, Recebido de clientes, Sangrias e suprimentos e Gaveta. A seção
+Divergência só aparece quando houver divergência.
+HOST › Caixas (só leitura): lista os caixas do dia escolhido (e os abertos), com
+terminal, operador, abertura, fechamento, vendido e situação. Vendido soma tudo o
+que o caixa vendeu, PRAZO líquido incluído, e a soma da coluna bate com o relatório
+Vendas por período. Dias anteriores nunca aparecem como abertos. Clicando no caixa,
+mostra a conferência por forma de pagamento (sistema × informado × diferença). O
+comprovante não tem pré-visualização na tela: o botão abre direto a tela de impressão,
+para reimprimir inclusive o caixa fechado automaticamente.
+Divergência: no Fechamento de caixa do DAV, o operador marca Divergência, escolhe
+a forma de pagamento, informa o valor contado, o motivo e uma observação. Fica
+gravado quem lançou e quando, e sai no comprovante e no relatório de fechamento.
+Desfazer divergência: em HOST › Caixas, com permissão, e só no mesmo dia em que
+foi lançada. Desfeita, o caixa volta a mostrar os valores do sistema.
+Especiﬁcação do PDV Smoke House
+Page 9 of 23
+===== PAGE 10 =====
+Fechamento automático à meia-noite: a partir das 23:30 aparece um aviso na tela do
+caixa de que ele fecha sozinho à meia-noite. À meia-noite o caixa fecha com hora 23:59
+do mesmo dia, para nenhum relatório misturar dois dias. O comprovante fica
+disponível em HOST › Caixas.
+Relatório de fechamento: botão abaixo do comprovante. Escolhe o período e as
+seções a mostrar (vendas, vendas a prazo, formas de pagamento, devoluções,
+sangrias e suprimentos, divergências) e sai em cupom ou em A4.
+Clientes (CRM)
+F1: identificar cliente no caixa
+Busca por CPF, CNPJ, telefone ou nome (com ou sem pontuação, sem acento). Uma
+etiqueta mostra o que foi digitado: CPF, CNPJ, Telefone ou Nome.
+Sem nada digitado, lista os últimos clientes atendidos.
+Dados visíveis: só nome e telefone. CPF, CNPJ, cidade e nascimento não aparecem
+aqui; se a busca for pelo documento, aparece só “documento confere”.
+Aniversário: faltando 7 dias ou menos, um bolinho ao lado do nome e um aviso na ficha
+(“Hoje é aniversário de… Completa X anos” ou “Aniversário em X dias”).
+Ficha ao lado: etiquetas, cliente desde, compras, total gasto, ticket médio, últimas 5
+compras, top 5 produtos e observação.
+Teclas: ↑ ↓ escolhe, Enter usa na venda, F2 novo cadastro, F4 histórico completo, Esc
+volta.
+Botões: Vender sem cliente ou Tirar cliente da venda (quando já tem um).
+Dentro de Formas de pagamento, F1 abre a mesma busca por cima do pagamento.
+Cliente bloqueado não pode ser usado: aviso “Vendas bloqueadas, fale com o
+gerente”.
+F2: cadastro rápido
+Campos: CPF ou CNPJ, telefone/WhatsApp, nome, data de nascimento, e-mail
+(opcional), cidade, estado (BA já selecionado) e “aceita ofertas pelo WhatsApp”.
+O número digitado na busca já vem no campo certo.
+Validações: nome obrigatório; CPF com 11 e CNPJ com 14 dígitos; precisa de
+documento ou telefone com DDD; documento não pode repetir; data no formato
+dd/mm/aaaa.
+Enter salva e já usa o cliente na venda.
+Especiﬁcação do PDV Smoke House
+Page 10 of 23
+===== PAGE 11 =====
+Histórico completo
+Abre clicando na foto ou no nome, no botão Ver histórico completo ou com F4.
+Topo: compras, total gasto, ticket médio, itens comprados, “compra a cada X dias” e
+última compra.
+Filtros: 30 dias, 90 dias, 12 meses ou Tudo, e busca por produto ou número do DAV.
+Compras agrupadas por mês (com total do mês); clicando, abre os itens (código,
+quantidade, unitário, total), desconto, pagamento e operador.
+Lateral: cadastro completo (CPF/CNPJ, telefone, e-mail, nascimento e idade,
+cidade/UF, cliente desde), 10 mais comprados, gasto por mês nos últimos 12 meses e
+“Como paga”.
+Etiquetas automáticas
+O sistema calcula as etiquetas pelas compras e atualiza sozinho. Os valores podem ser
+mudados em HOST › Clientes › Regras das etiquetas.
+Inativo precisa ter mais dias que Sumido. Quem volta a comprar sai de Sumido/Inativo
+na hora.
+HOST › Clientes
+Quadros: clientes ativos (compraram nos últimos 30 dias), novos no mês, recorrentes
+e vendas identificadas hoje.
+Filtros em botões arredondados, com a contagem num círculo à direita: Todos, VIP,
+Recorrentes, Sumidos 30+ dias, Inativos 60+ dias, Aniversariantes. A busca fica numa
+linha própria.
+Etiqueta Regra atual
+VIP Gastou R$ 1.000 ou mais nos últimos 30 dias, ou
+marcado “Sempre VIP”
+Recorrente Comprou pelo menos 1 vez em cada uma das
+últimas 4 semanas (1x a cada 7 dias)
+Sumido Sem comprar há mais de 30 dias
+Inativo Sem comprar há mais de 60 dias
+Cliente novo Cadastrado no mês atual
+Aniversário Aniversário nos próximos 7 dias
+Especiﬁcação do PDV Smoke House
+Page 11 of 23
+===== PAGE 12 =====
+Tabela: cliente (cidade embaixo do nome), telefone, última compra, compras, total
+gasto e situação.
+Ficha ao lado com dados completos, últimas 5 compras, top 5, observação e os botões
+Ver histórico completo, WhatsApp e Editar.
+Editar cliente (HOST)
+Abre pelo botão Editar ou com dois cliques na linha.
+Identificação (nome, CPF/CNPJ, nascimento), contato (telefone, e-mail, cidade,
+estado, aceita ofertas) e relacionamento (Sempre VIP, Bloquear vendas, observação
+que aparece no F1).
+Mesmas validações do cadastro, mais e-mail válido, nome sem repetir, dígitos do
+CPF/CNPJ conferidos e nascimento como data real no passado.
+Crédito do cliente: mostra o saldo e os movimentos (data, valor, origem, documento,
+quem fez). O botão Ajustar crédito pede a senha do administrador, permite Adicionar
+ou Retirar com motivo obrigatório e não mexe no caixa. Não deixa retirar mais do que o
+saldo.
+Venda a prazo: mostra limite, em aberto, disponível e as parcelas. O botão Alterar
+limite e bloqueio pede a senha do administrador.
+Esc, X ou clique fora com alterações não salvas perguntam “Descartar alterações?”.
+Novo cliente cadastrado pelo HOST não entra em nenhuma venda (botão “Salvar
+cliente”).
+Crédito do cliente
+É um saldo do cliente para usar como forma de pagamento (F3), só com o cliente
+identificado no F1.
+Entra por: sobra de troca, devolução com reembolso em crédito, estorno de venda
+cancelada que foi paga com crédito, lançamento no caixa (senha do administrador) e
+ajuste no HOST (senha do administrador).
+Sai por: uso no pagamento e ajuste no HOST.
+O saldo aparece na ficha do F1, no histórico completo e no cadastro do HOST. Todo
+movimento fica registrado.
+Excluir cliente (HOST)
+1. Editar › Excluir cliente pede o motivo (cadastro duplicado, cliente pediu a exclusão,
+cadastro com erro, ou Outro com descrição) e a senha do administrador.
+2. Senha errada: “Senha do administrador incorreta”, nada é apagado.
+Especiﬁcação do PDV Smoke House
+Page 12 of 23
+===== PAGE 13 =====
+3. Senha certa: pergunta “Deseja mesmo excluir o cadastro de…?” e avisa que os
+registros e históricos não poderão ser recuperados. O botão já selecionado é “Não,
+manter cadastro”.
+4. Ao excluir, o cliente some do CRM e do F1 e sai da venda em andamento. As vendas já
+emitidas continuam no sistema.
+5. Fica registrado só quem excluiu, quando e o motivo (“ver registro” embaixo da tabela).
+Produtos e estoque (HOST › Estoque)
+Não trabalhamos com balança, pesagem nem venda por grama: a unidade GR não existe.
+Lista de produtos
+Colunas: código, produto (com categoria e código de barras embaixo), custo, venda,
+margem, estoque/mínimo do local aberto, data de cadastro e situação (Normal, Repor,
+Inativo).
+Filtros com contagem: Todos, Para repor, Inativos. Busca por código, EAN, referência
+ou descrição.
+Clique ou Enter abre o cadastro; ↑ ↓ andam pela lista.
+Cadastro do produto
+Topo: código gerado automaticamente, “Cadastrado em [data] por [usuário]”, “Última
+alteração” e a chave Produto ativo. Inativo não aparece no caixa.
+Identificação: descrição (obrigatória, sem repetir), código de barras com botão Gerar
+(código interno começando com 2, para não conflitar com códigos de fábrica 789),
+referência, categoria, marca, unidade (UN, CX, PCT, KIT, PAR) e fornecedor principal.
+Preço e margem: custo, margem % e preço de venda se calculam entre si; mostra
+lucro por unidade e markup. Também preço de atacado, quantidade mínima para
+atacado e desconto máximo no caixa (0 a 100%).
+Estoque: estoque inicial (só no cadastro novo, número inteiro, com o local escolhido),
+estoque mínimo da frente e do fundo (não negativos) e localização. Em produto já
+cadastrado, o estoque é só leitura e muda por Entrada, Saída e Transferir.
+Fiscal: NCM (opcional; se preenchido, 8 dígitos), CEST, CFOP, origem e CSOSN. A
+categoria preenche o NCM sugerido.
+Foto: “Acrescentar foto” quando não tem, “Trocar foto” quando tem, e Remover. A foto
+aparece no caixa. Foto escolhida e não salva é descartada ao fechar.
+Validações ao salvar: descrição, custo maior que zero (obrigatório), preço de venda
+maior que zero, margem abaixo de 100%, código de barras com 8, 12, 13 ou 14 dígitos,
+dígito verificador correto e sem repetir, preço não pode ficar abaixo do custo, atacado
+Especiﬁcação do PDV Smoke House
+Page 13 of 23
+===== PAGE 14 =====
+não pode passar do preço de venda. O campo com erro fica vermelho.
+Valores: os campos de dinheiro aceitam vírgula ou ponto como decimal (23,50 ou
+23.50).
+Histórico de preço: toda mudança do preço de venda fica registrada (data, de, para,
+usuário) e alimenta o relatório Produtos com alteração no preço.
+Esc, X ou clique fora com alterações não salvas perguntam “Descartar alterações?”.
+Título e botões Salvar/Cancelar ficam sempre visíveis; só o meio rola.
+Histórico de custo
+Cada mudança de custo é registrada com data, custo, variação ( ▲  subiu, ▼  caiu),
+origem (cadastro, nota de compra com número, alteração manual, entrada manual) e
+usuário.
+No cadastro aparecem o gráfico da evolução e os 3 últimos registros, com o botão
+Relatório.
+Entrada e saída manual de estoque
+Botões Entrada e Saída na faixa do estoque aberto e dentro do cadastro (ali o produto
+já vem escolhido). O movimento é sempre no estoque que está aberto (Frente, Fundo
+ou Matriz).
+A janela pede o produto (busca por código, EAN ou nome), a quantidade e o motivo
+(obrigatório), e mostra o estoque antes → depois. Antes de lançar, confirma
+mostrando o nome do estoque; Voltar retorna ao formulário preenchido.
+Motivos de entrada: compra sem nota fiscal, devolução de cliente, bonificação do
+fornecedor, ajuste de inventário, transferência de outra loja, outro.
+Motivos de saída: perda ou avaria, produto vencido, uso interno, brinde ou amostra,
+ajuste de inventário, furto ou extravio, outro.
+“Outro” exige observação. A saída não pode ser maior que o estoque daquele local.
+A entrada aceita um custo unitário opcional; se for diferente do atual, entra no
+histórico de custo.
+No cadastro aparecem as 3 últimas movimentações, com o botão Relatório, e o botão
+“Ver tudo o que movimentou o estoque” (abre Rastrear produto).
+Estoques por local
+O estoque fica em três locais. A Matriz abastece o Fundo de loja e o Fundo abastece a
+Frente de loja. O caixa só vende o que está na Frente.
+A tela Estoque tem uma aba para cada local: Frente de loja, Fundo de loja e Matriz. Não
+existe aba “Todos”, para ninguém mexer no estoque errado sem querer.
+Especiﬁcação do PDV Smoke House
+Page 14 of 23
+===== PAGE 15 =====
+Cada aba mostra a quantidade só daquele local, os produtos abaixo do mínimo e as
+ações Entrada, Saída e Transferir, sempre para o local aberto.
+Venda, troca, devolução e cancelamento de venda mexem só na Frente.
+Transferir (na tela Estoque)
+1. O botão Transferir parte do estoque que está aberto. Destinos permitidos: Matriz →
+Fundo ou Frente; Fundo → Frente ou Matriz; Frente → Fundo ou Matriz.
+2. Escolhe o destino, busca os produtos (com filtro “O destino precisa”, que não aparece
+quando o destino é a Matriz) e vai montando a lista com as quantidades.
+3. Só no fim clica em Transferir. O estoque muda na hora nos dois locais. Não existe
+aprovação por valor nem por quantidade.
+4. Esc ou fechar com produtos na lista pergunta antes de descartar.
+Aba Transferências (HOST)
+Serve só para consultar e desfazer; não transfere. A transferência é livre entre os três
+estoques, nas seis direções.
+Filtro por data inicial e final (abre no dia de hoje; não aceita data futura). O calendário
+abre para cima e marca com a cor do HOST os dias que tiveram transferência, sem
+texto embaixo da data. Só tem o botão Fechar.
+Quadros: transferências, unidades movidas, valor a custo e itens desfeitos. Busca e
+filtro por rota.
+Cada transferência abre com os produtos. Dá para desfazer produtos selecionados ou
+a transferência inteira (ou o restante), com motivo e senha do administrador. Não
+desfaz se o produto já saiu do destino.
+Unidades, valor e romaneio contam só o que foi transferido de fato e mostram à parte
+o que foi desfeito.
+Romaneio para imprimir e Relatório de transferências (usa as datas escolhidas na
+página).
+Rastrear produto: linha do tempo de tudo o que movimentou o produto entre os três
+estoques: vendas, vendas canceladas, trocas, devoluções, transferências,
+transferências desfeitas, entradas e saídas manuais, entradas por nota (XML) e
+estoque inicial.
+Importar XML de compra
+1. Botão na tela Estoque. Arrasta ou escolhe o arquivo XML da NF-e.
+2. O sistema lê o fornecedor, número, data, valor e os itens, e liga cada item ao produto
+pelo código de barras ou pelo código do fornecedor usado em nota anterior.
+Especiﬁcação do PDV Smoke House
+Page 15 of 23
+===== PAGE 16 =====
+3. Item sem ligação: escolher o produto, cadastrar como produto novo ou não dar
+entrada nele. Quantidade fracionada bloqueia a entrada até o item ficar de fora.
+4. Escolhe o estoque de destino (Matriz já vem marcada, mas pode ser Fundo ou Frente)
+e clica em Dar entrada.
+5. A entrada atualiza o custo (com histórico) quando mudou, atualiza ou cria o
+fornecedor e não aceita a mesma nota (número + CNPJ) duas vezes.
+6. A entrada cria a conta a pagar da nota no Financeiro, com o fornecedor e o vencimento
+contado a partir da data de emissão, que pode ser editado. A unidade de cada item
+vem da nota.
+Venda a prazo e contas a receber
+A venda a prazo só é feita para cliente cadastrado, dentro do limite dele, e a baixa das
+parcelas é feita só em HOST › Financeiro › Contas a receber.
+Configuração (HOST › Configurações › Regras do caixa)
+Limite e bloqueio do cliente
+Cada cliente tem um limite: o valor máximo que pode ficar em aberto ao mesmo
+tempo. Limite zero = não compra a prazo.
+Cada cliente pode ser bloqueado para o prazo, mesmo tendo limite.
+Limite e bloqueio só mudam no HOST (cadastro do cliente ou ficha em Contas a
+receber), com a senha do administrador. Limite abaixo do que o cliente já deve é aceito
+com aviso.
+Configuração Valor atual
+Venda a prazo Ligada. Desligada, a forma PRAZO some do caixa
+(as parcelas em aberto continuam)
+Vencimento padrão 30 dias (de 1 a 120); o operador pode mudar a data
+na venda
+Parcelas Vencimento único ou até 3x mensais (escolhe só
+único, até 2x ou até 3x)
+Multa por atraso 2% (máximo 2%, limite do Código de Defesa do
+Consumidor)
+Juros de atraso 1% ao mês, contado por dia (máximo 10%)
+Especiﬁcação do PDV Smoke House
+Page 16 of 23
+===== PAGE 17 =====
+No F1 aparece “A prazo: limite · disponível” e o aviso de parcela vencida ou de prazo
+bloqueado.
+Vender a prazo (F3 › PRAZO)
+1. Exige cliente identificado no F1; recusa cliente bloqueado, sem limite ou acima do
+disponível (mostra quanto pode).
+2. Cliente com parcela vencida só compra a prazo com a senha do supervisor naquela
+venda.
+3. Escolhe vencimento único ou 2x/3x e a data do primeiro vencimento (depois de hoje,
+até 120 dias); a tela mostra as parcelas com datas e valores.
+4. Só um pagamento PRAZO por venda; o resto pode ser pago em outras formas.
+5. Ao finalizar, cada parcela vira um título do cliente em Contas a receber, ligado à venda
+e aos produtos.
+Contas a receber (HOST › Financeiro)
+Só tem clientes a prazo. Repasses de maquininha não ficam aqui. Novo lançamento no
+Financeiro cria só contas a pagar.
+Lista de clientes: quadros Em aberto, Vencido, Vence em 7 dias e Recebido em 30
+dias; filtros Todos, Em atraso, Vence esta semana e Bloqueados; busca por nome, CPF,
+CNPJ ou telefone. Colunas: cliente, limite, em aberto, vencido, próximo vencimento,
+uso do limite e situação. ↑ ↓ escolhe, Enter abre.
+Ficha do cliente (Esc volta para a lista): cabeçalho com limite, em aberto, vencido e
+disponível, e os botões Cobrar no WhatsApp, Extrato e Limite e bloqueio.
+Aba Parcelas: filtros Em aberto, Vencidas, Quitadas e Todas. Cada parcela mostra
+venda, compra, vencimento (com dias de atraso), valor, pago, multa, juros e total hoje,
+e o botão Produtos. Marcando as parcelas aparece a barra com o total e o botão Dar
+baixa.
+Aba Compras a prazo: cada compra por mês, com produtos, quantidades, valores e a
+situação de cada parcela (compra cancelada aparece marcada).
+Aba Pagamentos e recibos: todos os recibos, com parcelas pagas, forma, valor e
+quem deu baixa, e os botões Recibo e Desfazer baixa.
+Dar baixa
+Marca as parcelas e clica em Dar baixa. A tela mostra as parcelas (vencimento, atraso,
+valor, multa e juros, total hoje) e dois quadros: Valores de hoje e Pagamento.
+Sem escolha de data: a baixa é sempre na data de hoje.
+Especiﬁcação do PDV Smoke House
+Page 17 of 23
+===== PAGE 18 =====
+Valores de hoje: valor das parcelas, multa e juros, desconto e “Dispensar multa e
+juros” (pede senha do supervisor). Desconto acima do limite também pede senha.
+Embaixo, o total devido.
+Pagamento parcial: o campo “Valor que o cliente está pagando” vem com o total
+devido. Se o operador digita menos, a tela mostra quanto fica em aberto e como fica
+cada parcela (quitada ou “paga R$ X · resta R$ Y”). Exemplo: devido R$ 318,76, pago R$
+300,00 → a parcela fica com R$ 18,76 em aberto.
+O valor pago primeiro quita multa e juros e depois abate o valor da parcela, da mais
+antiga para a mais nova. O restante mantém o vencimento original; a multa já paga não
+é cobrada de novo e os juros recomeçam a contar a partir do dia do pagamento.
+Não existe mais o botão “Receber um valor”: o pagamento parcial é feito na própria
+baixa.
+O pagamento pode ser dividido em várias formas (“Dividir em outra forma”), que vêm
+das formas cadastradas no HOST. A soma tem que dar exatamente o valor pago.
+O dinheiro entra na conta certa: dinheiro no Caixa da loja, PIX na conta PIX, cartão no
+banco.
+Desfazer uma baixa parcial devolve a parcela ao saldo, à multa e aos juros de antes.
+Recibo
+Para cada parcela paga: a compra (data e DAV), os produtos com quantidade e valor, o
+total da compra, “PAGO AGORA: PARCELA X DE Y” e quanto falta daquela compra (ou
+“COMPRA QUITADA”).
+Depois: multa e juros, desconto ou dispensa, a forma de pagamento e o saldo devedor
+total do cliente no momento da baixa.
+Imprimir e WhatsApp. Reimpressão mostra os valores do dia em que foi feito.
+Recibo novo feito depois de um desfazer sai com “SUBSTITUI O RECIBO Nº X
+(DESFEITO)”; o desfeito mostra “SUBSTITUÍDO PELO RECIBO Nº Y”.
+Desfazer baixa
+Serve só para corrigir lançamento errado: parcela errada, forma de pagamento errada,
+valor errado ou cliente errado. Não existe desfazer para devolver produto nem
+devolução de dinheiro de parcela paga.
+Só no mesmo dia em que a baixa foi lançada. Todos os dias contam (a loja funciona
+todos os dias); no dia seguinte o botão fica bloqueado.
+Fica no botão Desfazer da parcela, no recibo e na aba Pagamentos e recibos. Pede o
+motivo e a senha do administrador.
+Especiﬁcação do PDV Smoke House
+Page 18 of 23
+===== PAGE 19 =====
+Se o recibo pagou mais de uma parcela, avisa e todas voltam a ficar em aberto. Depois
+é só dar a baixa certa de novo.
+As parcelas voltam com o saldo de antes, o dinheiro sai da conta onde entrou e o
+recibo fica marcado “Baixa desfeita”, com o motivo e quem desfez. Nada é apagado.
+Extrato e cobrança
+Extrato: cada compra a prazo com data, DAV, produtos e valores, as parcelas com
+vencimento e situação (vencida em vermelho, com multa e juros) e o total em aberto
+hoje. Imprimir, PDF, Excel e WhatsApp.
+Cobrar no WhatsApp: mensagem pronta (parcelas vencidas com valor atualizado, ou
+lembrete do próximo vencimento), que pode ser editada antes de abrir o WhatsApp.
+Formas de pagamento, configurações, usuários e relatórios
+Formas de pagamento (HOST › Configurações)
+Botão Adicionar abre “Nova forma de pagamento”: tipo (Crédito, Débito, PIX, Dinheiro,
+Vale, Outro), nome no caixa, maquininha ou conta, taxa %, “recebe em”, aceita troco,
+permite parcelar e mostrar no caixa.
+Ao abrir e ao escolher o tipo, o resto se ajusta (ex.: Crédito liga parcelamento e coloca
+30 dias).
+Valida: nome obrigatório, maquininha ou conta obrigatória para Crédito, Débito e PIX,
+taxa numérica entre 0 e 30%, não repetir nome + conta.
+A forma nova entra na lista com a etiqueta “Nova” e aparece na hora no F3 do DAV e da
+NFC-e e na baixa do Contas a receber.
+A chave Ativa mostra ou esconde a forma no caixa.
+Formas fixas do sistema: PRAZO (só com venda a prazo ligada) e Crédito do cliente
+(só quando o cliente tem saldo). Boleto e carnê não existem.
+Configurações do caixa
+Existem as Configurações do caixa (Menu do DAV, com senha do supervisor) e as
+Configurações do HOST. As duas ficam.
+Preço de atacado: opção para ativar (e a quantidade mínima) em Configurações do
+caixa › Geral.
+Pesquisa por parte do nome: em Configurações do caixa › Pesquisa.
+Fechamento cego: disponível, mas desligado.
+HOST › Empresa: razão social, nome fantasia (sai no cupom e nos relatórios), CNPJ
+(dígitos conferidos), inscrição estadual, regime e tabela IBPT.
+Especiﬁcação do PDV Smoke House
+Page 19 of 23
+===== PAGE 20 =====
+HOST › Regras do caixa: fechamento cego, fundo de troco sugerido (usado no Abrir
+caixa), desconto máximo sem senha, cancelar item/cupom pede senha (desligado),
+venda a prazo, vencimento padrão, parcelas, multa e juros. “Vender com estoque
+zerado” não existe.
+HOST › Equipamentos: impressora do cupom, impressora do DANFE e gaveta.
+HOST › Cópia de segurança: Fazer backup baixa um arquivo com os dados (sem as
+senhas). Horário e quantidade de cópias da nuvem ficam em Integrações.
+Um só botão Salvar alterações grava todas as seções; erro aparece dentro da seção.
+Usuários e permissões (HOST)
+Cartão Usuários com nome, perfil, terminal fixo e situação. Novo usuário e Editar:
+nome (sem repetir), perfil, terminal fixo (Nenhum, Terminal 01, Terminal 02), senha +
+confirmar (mínimo 4 dígitos; em branco mantém a atual) e ativo.
+O administrador não pode ser desativado nem mudar de perfil.
+Perfis: Administrador, Gerente, Supervisor de caixa, Operador de caixa e Faturista. O
+limite de desconto do perfil é salvo.
+Usuário novo aparece no Abrir caixa e, se o perfil permitir, como supervisor.
+Permissões: cada perfil tem um padrão de funções e de telas liberadas, e cada usuário
+pode ter ajustes próprios em HOST › Permissões. O administrador principal (Lucas)
+tem tudo liberado sempre.
+Função sem permissão pede a senha de alguém que tenha. Quem já tem a permissão
+passa direto, sem pedir senha. A ação grava quem fez e quem autorizou.
+O HOST tem login por usuário: as telas sem permissão não aparecem, e os acessos
+ficam registrados.
+Quem está com o caixa aberto não pode ser desativado. Renomear um usuário atualiza
+o nome em caixas, vendas e relatórios.
+Chamados (HOST)
+O vendedor abre chamado para o supervisor; o supervisor abre para o vendedor ou
+para o gerente. Cada chamado mostra quem abriu, para quem, a categoria e quando.
+Cada usuário vê só os chamados dele. A aba Abertos mostra os abertos e os em
+andamento, em quadro ou em lista, com busca e filtro por categoria, para não ficar
+confuso com muitos chamados.
+A aba Concluídos é uma lista paginada, com período De/Até, indicadores, gráfico por
+categoria e relatório para imprimir.
+Ao entrar no sistema, aparece um aviso com os chamados pendentes do usuário. No
+DAV, o F11 abre um chamado.
+Especiﬁcação do PDV Smoke House
+Page 20 of 23
+===== PAGE 21 =====
+Fornecedores e integrações (HOST)
+Fornecedores: lista com busca; Novo fornecedor e Editar com razão social, CNPJ
+(dígitos conferidos, sem repetir), contato, telefone, e-mail, cidade e UF; Excluir pede
+confirmação e tira o fornecedor dos produtos ligados.
+Integrações: cada Configurar abre as opções e atualiza a situação do cartão: Central
+do fornecedor (e-mail de pedidos, pedido automático no mínimo), Central do cliente
+(compras e crédito disponível), PIX (tipo e chave, conta), Envio para a contabilidade
+(e-mail e dia), Backup na nuvem (horário e cópias). A importação e manifestação de
+notas (MD-e) aguarda a integração fiscal.
+Início: o cartão Hoje mostra vendido, número de vendas, caixas abertos e produtos
+para repor, com dados reais. Os itens que dependem do fiscal aparecem como
+“Aguarda integração fiscal”. Etiquetas abre a impressão de etiquetas de preço.
+Relatórios
+Todo relatório abre a tela Pré-visualizar: folhas A4 paginadas (nenhuma passa do
+tamanho da folha, mesmo com nomes longos), zoom, navegação entre páginas (“1 de
+3”), Imprimir, PDF e Excel. Esc fecha e volta para a tela anterior.
+Ficam em HOST › Relatórios, por categoria, com filtro de período e operador (lista os
+usuários cadastrados). Todos usam os dados reais e o custo real do produto; o usuário
+que aparece no cabeçalho é o logado.
+Produtos vendidos: coluna Margem (lucro ÷ venda). Listagem de produtos: estoque
+da Frente, do Fundo e da Matriz. Estoque mínimo e reposição: só ativos com a frente
+abaixo do mínimo, dizendo se transfere do fundo, da matriz ou se compra.
+Produtos com alteração no preço: vem do histórico de preço. Listagem de clientes:
+vem do CRM, com o crédito. Contas a receber, contas a pagar, DRE e balancete: vêm
+do Financeiro. Sangrias e suprimentos: data, caixa e operador.
+Vendas por período: além das vendas, mostra quanto faturou em cada forma de
+pagamento (também no PDF e no Excel). DRE: uma só, por competência, sem imposto
+duplicado. Fechamento: usa o período filtrado. O filtro Operador tem o mesmo
+sentido em todos os relatórios.
+Financeiro: cada caixa fechado lança no Caixa geral e no Fluxo de caixa um registro
+por forma de pagamento.
+Entrada e saída manual de estoque: data e hora, produto, tipo e local, quantidade,
+estoque antes → depois, motivo, observação e usuário; no final, total de lançamentos e
+a linha entradas / saídas / saldo.
+Histórico de custo: data, produto, custo anterior, custo novo, variação %, origem e
+usuário; no final, total de registros, altas e quedas.
+Especiﬁcação do PDV Smoke House
+Page 21 of 23
+===== PAGE 22 =====
+Transferências de estoque: número, data, rota, produto, quantidade, valor a custo,
+situação e motivo do desfazer.
+Os relatórios do produto também abrem pelo botão Relatório dentro do cadastro, já
+filtrados para aquele produto e todo o período.
+Abrir o relatório não apaga nem muda nenhum valor. Datas inválidas (fim antes do
+início, data futura) são recusadas.
+Não existem: Comissões, Ordens de serviço e Recebimentos de crediário.
+Padrões de tela
+Todos os calendários do sistema seguem o modelo do calendário de Transferências.
+Janelas no mesmo padrão: título com botão de fechar, conteúdo e botões no rodapé.
+Esc fecha e volta para a tela anterior.
+Sem textos explicativos nem instruções de teclado nas janelas. As teclas ficam só em
+Dicas.
+O rodapé mostra só “Versão X”, sem data, e a versão sobe a cada publicação.
+Funciona em celular (390 px) sem rolagem lateral.
+Dados de teste: vendas desde agosto até hoje, com numeração de DAV em ordem de
+data, para testar relatórios e fechamentos.
+Fora do escopo por enquanto
+Parte fiscal (parada): a emissão real da NFC-e será definida com o sistema que vai fazer a
+integração. O protótipo só simula a nota (chave, protocolo e DANFE de exemplo).
+O que o protótipo só simula e o programador precisa construir:
+Banco de dados e servidor (hoje os dados ficam na memória da página e voltam ao
+exemplo ao recarregar).
+Data e hora do servidor: regras de prazo (desfazer baixa ou divergência só no mesmo
+dia, fechamento automático à meia-noite, vencimentos, juros) têm que usar a data do
+servidor, nunca a do computador do caixa. Senão basta mudar o relógio do PC para
+burlar.
+Comunicação entre os terminais 01 e 02 (vendas abertas, estoque reservado e
+numeração única).
+Login e senhas reais (hoje todas as senhas de teste são 1234; o administrador é o
+Lucas).
+WhatsApp: o protótipo abre o WhatsApp com a mensagem pronta (link wa.me); envio
+automático, se desejado, precisa de integração.
+Especiﬁcação do PDV Smoke House
+Page 22 of 23
+===== PAGE 23 =====
+Impressora térmica, gaveta de dinheiro, leitor de código de barras e TEF/maquininha.
+No protótipo, Imprimir usa a impressão do navegador.
+Backup automático dos dados e cuidados com os dados dos clientes (LGPD).
+Integrações externas (central do fornecedor, central do cliente, PIX com QR Code,
+envio para contabilidade, backup na nuvem): as telas de configuração existem, a
+conexão real fica com o programador.
+Especiﬁcação do PDV Smoke House
+Page 23 of 23
